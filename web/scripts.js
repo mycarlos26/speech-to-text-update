@@ -88,15 +88,27 @@ function transcription_stoppd2() {
   enableSettingControle();
 }
 
+let messageCounter = 0;  // Variable para alternar colores
+
 function addMessage(elementId, message) {
   const el = document.querySelector(`#${elementId}`);
   const newel = document.createElement("div");
   newel.classList.add("segment-container");
   newel.textContent = message;
+
+  // Definir colores alternativos
+  const colors = ["#f0f0f0", "#d1e7ff", "#c3f3c3", "#ffd1d1"];
+  newel.style.backgroundColor = colors[messageCounter % colors.length];
+
+  // Incrementar el contador para el próximo mensaje
+  messageCounter++;
+
   el.appendChild(newel);
 
+  // Desplazar el contenedor hacia el último mensaje agregado
   el.scrollTop = el.scrollHeight;
 }
+
 
 function onClickSegment(event) {
   const audio = document.querySelector("#audio-control");
