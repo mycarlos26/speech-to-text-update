@@ -15,7 +15,7 @@ class OpenAIAPI:
             messages=[
                 {
                     "role": "system",
-                    "content": "Please proofread. Please return only the proofreading results.",
+                    "content": "You are an experienced Quality Assurance (QA) professional specializing in both manual and automated testing. Provide clear, concise, and precise answers to interview questions, focusing on practical applications and industry best practices without unnecessary details.",
                 },
                 {"role": "user", "content": text},
             ],

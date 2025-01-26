@@ -16,9 +16,9 @@ from speech_to_text.websoket_server import WebSocketServer
 from speech_to_text.openai_api import OpenAIAPI
 
 def is_question(text):
-    # Expresión regular para detectar preguntas en inglés
-    pattern = r'^\s*(who|what|where|when|why|how|is|are|do|does|can|could|should|would|did|will|shall|may|might|has|have|had|was|were|whom|which)\b.*\??$'
-    return bool(re.match(pattern, text.strip(), re.IGNORECASE))
+    # Expresión regular mejorada para detectar preguntas en inglés en cualquier parte del texto
+    pattern = r'\b(who|what|where|when|why|how|is|are|do|does|can|could|should|would|did|will|shall|may|might|has|have|had|was|were|whom|which)\b.*\?$'
+    return bool(re.search(pattern, text.strip(), re.IGNORECASE))
 
 
 class AppOptions(NamedTuple):
@@ -83,6 +83,10 @@ class AudioTranscriber:
                     for segment in segments:
                         text = segment.text.strip()
                         eel.display_transcription(text)
+                        
+                        # eel.on_recive_message("Detected a question, calling OpenAI API...")
+                        # response = self.openai_api.text_proofreading(text)
+                        # eel.display_transcription(f"AI Response: {response}")
 
                         if is_question(text):
                             eel.on_recive_message("Detected a question, calling OpenAI API...")
@@ -97,41 +101,6 @@ class AudioTranscriber:
                 except Exception as e:
                     eel.on_recive_message(str(e))
 
-
-    # async def transcribe_audio(self):
-    #     # Ignore parameters that affect performance
-    #     transcribe_settings = self.transcribe_settings.copy()
-    #     transcribe_settings["without_timestamps"] = True
-    #     transcribe_settings["word_timestamps"] = False
-
-    #     with ThreadPoolExecutor() as executor:
-    #         while self.transcribing:
-    #             try:
-    #                 # Get audio data from queue with a timeout
-    #                 audio_data = await self.event_loop.run_in_executor(
-    #                     executor, functools.partial(self.audio_queue.get, timeout=3.0)
-    #                 )
-
-    #                 # Create a partial function for the model's transcribe method
-    #                 func = functools.partial(
-    #                     self.whisper_model.transcribe,
-    #                     audio=audio_data,
-    #                     **transcribe_settings,
-    #                 )
-
-    #                 # Run the transcribe method in a thread
-    #                 segments, _ = await self.event_loop.run_in_executor(executor, func)
-
-    #                 for segment in segments:
-    #                     eel.display_transcription(segment.text)
-    #                     if self.websocket_server is not None:
-    #                         await self.websocket_server.send_message(segment.text)
-
-    #             except queue.Empty:
-    #                 # Skip to the next iteration if a timeout occurs
-    #                 continue
-    #             except Exception as e:
-    #                 eel.on_recive_message(str(e))
 
     def process_audio(self, audio_data: np.ndarray, frames: int, time, status):
         is_speech = self.vad.is_speech(audio_data)
