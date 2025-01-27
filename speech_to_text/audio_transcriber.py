@@ -155,7 +155,8 @@ class AudioTranscriber:
         eel.transcription_clear()
 
         if self.openai_api is not None:
-            self.text_proofreading(segment_list)
+            #self.text_proofreading(segment_list)
+            eel.on_recive_message("Por ahora AI desactivado.")
         else:
             eel.on_recive_segments(segment_list)
 

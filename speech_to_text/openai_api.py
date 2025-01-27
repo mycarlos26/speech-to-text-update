@@ -15,7 +15,7 @@ class OpenAIAPI:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an experienced Quality Assurance (QA) professional specializing in both manual and automated testing. Provide clear, concise, and precise answers to interview questions, focusing on practical applications and industry best practices without unnecessary details.",
+                    "content": "You are an experienced Quality Assurance (QA) professional with expertise in manual and automated testing. Provide brief, to-the-point answers to interview questions, focusing on practical applications and industry best practices. Keep responses concise and limited to key insights without additional details.",
                 },
                 {"role": "user", "content": text},
             ],
