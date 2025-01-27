@@ -1,11 +1,17 @@
 import os
+from dotenv import load_dotenv
 import google.generativeai as genai
 
+# Load environment variables from .env file
+load_dotenv()
 
 class Gemini:
     def __init__(self):
         # Configurar la API de Gemini con la clave de entorno
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise EnvironmentError("GEMINI_API_KEY environment variable not found.")
+        genai.configure(api_key=api_key)
         
         # Definir parámetros del modelo
         self.MODEL_NAME = "gemini-2.0-flash-exp"
@@ -25,7 +31,7 @@ class Gemini:
             "Provide brief, to-the-point answers to interview questions, focusing on practical applications and industry best practices. "
             "Keep responses concise and limited to key insights without additional details."
         )
-    def generate_response(self, text: str) -> str:
+    def text_proofreading(self, text: str) -> str:
         """Genera una respuesta basada en el texto de entrada utilizando el modelo de Gemini."""
         model = genai.GenerativeModel(
             model_name=self.MODEL_NAME,

@@ -110,6 +110,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# Audio file
+*.mp3
+*.wav
+web/voice.wav
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -127,3 +132,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+

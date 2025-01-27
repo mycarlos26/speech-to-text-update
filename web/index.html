@@ -126,11 +126,25 @@
               Websocket server:</label>
             <input type="checkbox" id="use_websocket_server" class="setting-control" />
           </div>
-          <div class="setting-item">
+            <div class="setting-item"></div>
             <label for="use_openai_api" class="setting-label" title="Text proofreading option via OpenAI API.">*Use
               OpenAI API in Text Proofreading:</label>
-            <input type="checkbox" id="use_openai_api" class="setting-control" />
-          </div>
+            <input type="checkbox" id="use_openai_api" class="setting-control" onclick="toggleCheckbox('use_openai_api', 'use_gemini_api')" />
+            </div>
+            <div class="setting-item">
+            <label for="use_gemini_api" class="setting-label" title="Text proofreading option via Gemini API.">*Use
+              Gemini API in Text Proofreading:</label>
+            <input type="checkbox" id="use_gemini_api" class="setting-control" onclick="toggleCheckbox('use_gemini_api', 'use_openai_api')" />
+            </div>
+            <script>
+            function toggleCheckbox(currentId, otherId) {
+              const currentCheckbox = document.getElementById(currentId);
+              const otherCheckbox = document.getElementById(otherId);
+              if (currentCheckbox.checked) {
+              otherCheckbox.checked = false;
+              }
+            }
+            </script>
         </div>
       </div>
 

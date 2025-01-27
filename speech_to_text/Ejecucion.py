@@ -73,7 +73,7 @@ def get_user_settings():
 
 @eel.expose
 def start_transcription(user_settings):
-    global transcriber, event_loop, thread, websocket_server, openai_api
+    global transcriber, event_loop, thread, websocket_server, openai_api, gemini_api
     try:
         (
             filtered_app_settings,
@@ -93,6 +93,9 @@ def start_transcription(user_settings):
 
         if app_settings.use_openai_api:
             openai_api = OpenAIAPI()
+        
+        if app_settings.use_gemini_api:
+            gemini_api = Gemini()
 
         transcriber = AudioTranscriber(
             event_loop,
@@ -101,6 +104,7 @@ def start_transcription(user_settings):
             app_settings,
             websocket_server,
             openai_api,
+            gemini_api,
         )
         asyncio.set_event_loop(event_loop)
         thread = threading.Thread(target=event_loop.run_forever, daemon=True)
@@ -113,7 +117,7 @@ def start_transcription(user_settings):
 
 @eel.expose
 def stop_transcription():
-    global transcriber, event_loop, thread, websocket_server, openai_api
+    global transcriber, event_loop, thread, websocket_server, openai_api, gemini_api
     if transcriber is None:
         eel.transcription_stoppd()
         return
@@ -137,13 +141,14 @@ def stop_transcription():
     thread = None
     websocket_server = None
     openai_api = None
+    gemini_api = None
 
     eel.transcription_stoppd()
 
 
 @eel.expose
 def audio_transcription(user_settings, base64data):
-    global transcriber, openai_api
+    global transcriber, openai_api, gemini_api
     
     # Obtener la ruta del script actual y establecerla como directorio de trabajo
     current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -162,6 +167,9 @@ def audio_transcription(user_settings, base64data):
         if app_settings.use_openai_api:
             openai_api = OpenAIAPI()
 
+        if app_settings.use_gemini_api:
+            gemini_api = Gemini()
+
         transcriber = AudioTranscriber(
             event_loop,
             whisper_model,
@@ -169,6 +177,7 @@ def audio_transcription(user_settings, base64data):
             app_settings,
             None,
             openai_api,
+            gemini_api,
         )
 
         audio_data = base64_to_audio(base64data)

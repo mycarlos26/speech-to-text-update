@@ -14,6 +14,7 @@ from speech_to_text.vad import Vad
 from speech_to_text.utils.file_utils import write_audio
 from speech_to_text.websoket_server import WebSocketServer
 from speech_to_text.openai_api import OpenAIAPI
+from speech_to_text.gemini import Gemini
 
 def is_question(text):
     # Expresión regular mejorada para detectar preguntas en inglés en cualquier parte del texto
@@ -30,6 +31,7 @@ class AppOptions(NamedTuple):
     create_audio_file: bool = True
     use_websocket_server: bool = False
     use_openai_api: bool = False
+    use_gemini_api: bool = False
 
 
 class AudioTranscriber:
@@ -41,6 +43,7 @@ class AudioTranscriber:
         app_options: AppOptions,
         websocket_server: WebSocketServer,
         openai_api: OpenAIAPI,
+        gemini_api: Gemini,
     ):
         self.event_loop = event_loop
         self.whisper_model: WhisperModel = whisper_model
@@ -48,6 +51,7 @@ class AudioTranscriber:
         self.app_options = app_options
         self.websocket_server = websocket_server
         self.openai_api = openai_api
+        self.gemini_api = gemini_api
         self.vad = Vad(app_options.non_speech_threshold)
         self.silence_counter: int = 0
         self.audio_data_list = []
@@ -84,14 +88,17 @@ class AudioTranscriber:
                         text = segment.text.strip()
                         eel.display_transcription(text)
                         
-                        # eel.on_recive_message("Detected a question, calling OpenAI API...")
-                        # response = self.openai_api.text_proofreading(text)
-                        # eel.display_transcription(f"AI Response: {response}")
 
                         if is_question(text):
-                            eel.on_recive_message("Detected a question, calling OpenAI API...")
-                            response = self.openai_api.text_proofreading(text)
-                            eel.display_transcription(f"AI Response: {response}")
+                            
+                            eel.on_recive_message("Detected a question, calling AI API...")
+                            
+                            if self.app_options.use_openai_api:
+                                response = self.openai_api.text_proofreading(text)
+                                eel.display_transcription(f"OpenAI Response: {response}")
+                            elif self.app_options.use_gemini_api:
+                                response = self.gemini_api.text_proofreading(text)
+                                eel.display_transcription(f"Gemini Response: {response}")
 
                         if self.websocket_server is not None:
                             await self.websocket_server.send_message(text)
