@@ -17,7 +17,7 @@ from speech_to_text.utils.audio_utils import get_valid_input_devices, base64_to_
 from speech_to_text.utils.file_utils import read_json, write_json, write_audio
 from speech_to_text.websoket_server import WebSocketServer
 from speech_to_text.openai_api import OpenAIAPI
-
+from speech_to_text.gemini import Gemini
 
 
 
@@ -29,6 +29,7 @@ event_loop: asyncio.AbstractEventLoop = None
 thread: threading.Thread = None
 websocket_server: WebSocketServer = None
 openai_api: OpenAIAPI = None
+gemini: Gemini = None
 
 
 @eel.expose
